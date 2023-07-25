@@ -5,7 +5,13 @@ Corruption is a huge bane to Africa’s development. African countries must deve
 
 ## Team
 Full Stack - React(Frontend) & Python Flask(Backend)
-
+## Collaborators
+1. Bonnke Kimani
+2. Jephat Mukundi
+3. Alvin Adams
+4. Barry Klein
+5. Kelly Koome
+6. Morgan Jason
 ### MVP Features 
 1. Users can create an account and log in. 
 2. Users can create a red-flag record (An incident linked to corruption). 
