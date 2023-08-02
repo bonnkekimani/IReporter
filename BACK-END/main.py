@@ -73,3 +73,40 @@ def admin_login():
     else:
         return jsonify({"message": "Invalid credentials"}), 401
 
+
+
+# Route to post a new role to the database
+@app.route("/add_role", methods=["POST"])
+def add_role():
+    data = request.json
+    name = data.get("name")
+
+    # Check if the role name already exists in the database
+    existing_role = Role.query.filter_by(name=name).first()
+    if existing_role:
+        return jsonify({"message": "Role with this name already exists"}), 400
+
+    # Create a new Role object with the provided data
+    new_role = Role(name=name)
+
+    try:
+        # Add the new_role to the database and commit the changes
+        db.session.add(new_role)
+        db.session.commit()
+
+        # Return a success response to the client
+        return jsonify({"message": "Role added successfully"}), 201
+    except Exception as e:
+        # Handle errors, e.g., database or validation errors
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
+if __name__ == '__main__':
+    app.run()
