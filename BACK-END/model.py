@@ -20,3 +20,35 @@ class Call(db.Model):
 
         db.session.add(self)
         db.session.commit()
+
+
+class Report(db.Model):
+    __tablename__ = 'reports'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    media = db.Column(db.Text, nullable=False)
+    location = db.Column(db.Text, nullable=False)
+
+    reporter_email = db.Column(db.String(50), nullable=False)
+
+    # Foreign key column to link the report to the user who reported it
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    def __repr__(self):
+        return f"<Report {self.title}>"
+
+    def save(self, reporter_user=None):
+        if reporter_user:
+            # Set the reporter attribute to the user who is reporting
+            self.reporter = reporter_user
+            # Set the reporter_email attribute to the email of the user who is reporting
+            self.reporter_email = reporter_user.email
+        else:
+            # If no reporter_user is provided, set the reporter and reporter_email attributes to None
+            self.reporter = None
+            self.reporter_email = None
+
+        # Save the report to the database
+        db.session.add(self)
+        db.session.commit()
