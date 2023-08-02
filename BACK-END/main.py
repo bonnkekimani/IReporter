@@ -29,3 +29,26 @@ def signup():
         # Handle errors, e.g., database or validation errors
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+
+    user = User.query.filter_by(email=email, password=password).first()
+
+    if user:
+        # Check if the user has the 'user' role
+        user_role = Role.query.filter_by(name='user').first()
+        is_user = user_role in user.roles
+
+        if is_user:
+            return jsonify({"message": f"User {user.firstName} logged in successfully"}), 200
+        else:
+            return jsonify({"message": "Invalid credentials"}), 401
+    else:
+        return jsonify({"message": "Invalid credentials"}), 401
+
+
