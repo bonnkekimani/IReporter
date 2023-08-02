@@ -64,6 +64,18 @@ login_model=api.model(
 
 
 
+#password hashing
+db_user=User.query.filter_by(firstName=firstName, lastName=lastName).first()
+
+if db_user and check_password_hash(db_user.password,password):
+
+        access_token=create_access_token(identity=db_user.firstName and db_user.lastName)
+        refresh_token=create_refresh_token(identity=db_user.firstName and db_user.lastName)
+
+        return jsonify(
+            {"access_token":access_token,"refresh_token":refresh_token}
+        )
+
 @api.route('/Report')
 class HelloResource(Resource):
     def get(self):
@@ -107,7 +119,7 @@ class ReportResource(Resource):
 
 
     @api.marshal_with(report_model)
-    # @jwt_required()
+    @jwt_required()
     def delete(self, id):
         """delete a report by id"""
         report_to_delete = Report.query.get_or_404(id)
