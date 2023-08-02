@@ -5,6 +5,19 @@ from sqlalchemy.orm import relationship
 from exts import db
 
 
+# Role model class
+class Role(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+
+# Association table for the many-to-many relationship between users and roles
+user_roles = db.Table('user_roles',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('role_id', db.Integer, db.ForeignKey('roles.id'), primary_key=True)
+)
+
+
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -24,3 +37,7 @@ class User(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+
+
+
