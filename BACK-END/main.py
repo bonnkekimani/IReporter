@@ -52,3 +52,24 @@ def login():
         return jsonify({"message": "Invalid credentials"}), 401
 
 
+
+@app.route("/admin_login", methods=["POST"])
+def admin_login():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+
+    admin = Admin.query.filter_by(email=email, password=password).first()
+
+    if admin:
+        # Check if the admin has the 'admin' role
+        admin_role = Role.query.filter_by(name='admin').first()
+        is_admin = admin_role in admin.roles
+
+        if is_admin:
+            return jsonify({"message": "Admin login successful"}), 200
+        else:
+            return jsonify({"message": "Invalid credentials"}), 401
+    else:
+        return jsonify({"message": "Invalid credentials"}), 401
+
