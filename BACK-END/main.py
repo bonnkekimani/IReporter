@@ -28,6 +28,42 @@ JWTManager(app)
 api = Api(app,doc='/docs')
 
 
+#model serializer
+report_model=api.model(
+    "Report",
+    {
+        "id":fields.Integer(),
+        "title":fields.String(),
+        "description":fields.String(),
+        "media":fields.String(),
+        "location":fields.String(),
+    }
+)
+
+signup_model=api.model(
+    "SignUp",
+    {
+        "firstName":fields.String(),
+        "lastName":fields.String(),
+        "email":fields.String(),
+        "gender":fields.String(),
+        "password":fields.String(),
+
+    }
+)
+
+login_model=api.model(
+    "Login",
+    {
+        "firstName":fields.String(),
+        "lastName":fields.String(),
+        "password":fields.String(),
+
+    }
+)
+
+
+
 @api.route('/Report')
 class HelloResource(Resource):
     def get(self):
@@ -43,6 +79,7 @@ class ReportsResource(Resource):
 
         return reports
         pass
+
 
 
 
@@ -90,6 +127,7 @@ def make_shell_context():
         "Report": Report,
         "Call": Call,
     }
+
 
 if __name__ == '__main__':
     app.run()
