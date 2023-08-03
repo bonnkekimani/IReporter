@@ -3,7 +3,7 @@ from flask import Flask,request,jsonify, render_template
 from flask_restx import Api, Resource,fields
 from config import DevConfig
 from exts import db
-from models import User, Admin, Report, Call
+from model import User, Role, Report, Call
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash,check_password_hash
 from werkzeug.utils import secure_filename
@@ -26,14 +26,52 @@ migrate=Migrate(app,db)
 JWTManager(app)
 
 api = Api(app,doc='/docs')
+# Configuring Cloudinary
+cloudinary.config(
+    cloud_name=os.getenv('CLOUD_NAME'),
+    api_key=os.getenv('API_KEY'),
+    api_secret=os.getenv('API_SECRET')
+)
 
+#model serializer
+report_model=api.model(
+    "Report",
+    {
+        "id":fields.Integer(),
+        "title":fields.String(),
+        "description":fields.String(),
+        "media":fields.String(),
+        "location":fields.String(),
+    }
+)
+
+signup_model=api.model(
+    "SignUp",
+    {
+        "firstName":fields.String(),
+        "lastName":fields.String(),
+        "email":fields.String(),
+        "gender":fields.String(),
+        "password":fields.String(),
+
+    }
+)
+
+login_model=api.model(
+    "Login",
+    {
+        "firstName":fields.String(),
+        "lastName":fields.String(),
+        "password":fields.String(),
+
+    }
+)
 
 # API route for user registration
 @app.route("/signup", methods=["POST"])
 def signup():
     # Get the user data from the request's JSON body
     data = request.json
-
     # Create a new User object with the provided data
     new_user = User(
         firstName=data["firstName"],
@@ -133,54 +171,17 @@ def add_role():
         return jsonify({"error": str(e)}), 500
 
 
+# #password hashing
+# db_user=User.query.filter_by(firstName=firstName, lastName=lastName).first()
 
-#model serializer
-report_model=api.model(
-    "Report",
-    {
-        "id":fields.Integer(),
-        "title":fields.String(),
-        "description":fields.String(),
-        "media":fields.String(),
-        "location":fields.String(),
-    }
-)
+# if db_user and check_password_hash(db_user.password,password):
 
-signup_model=api.model(
-    "SignUp",
-    {
-        "firstName":fields.String(),
-        "lastName":fields.String(),
-        "email":fields.String(),
-        "gender":fields.String(),
-        "password":fields.String(),
+#                 access_token=create_access_token(identity=db_user.firstName and db_user.lastName)
+#                 refresh_token=create_refresh_token(identity=db_user.firstName and db_user.lastName)
 
-    }
-)
-
-login_model=api.model(
-    "Login",
-    {
-        "firstName":fields.String(),
-        "lastName":fields.String(),
-        "password":fields.String(),
-
-    }
-)
-
-
-
-#password hashing
-db_user=User.query.filter_by(firstName=firstName, lastName=lastName).first()
-
-if db_user and check_password_hash(db_user.password,password):
-
-        access_token=create_access_token(identity=db_user.firstName and db_user.lastName)
-        refresh_token=create_refresh_token(identity=db_user.firstName and db_user.lastName)
-
-        return jsonify(
-            {"access_token":access_token,"refresh_token":refresh_token}
-        )
+#                 return jsonify(
+#                     {"access_token":access_token,"refresh_token":refresh_token}
+#                 )
 
 @api.route('/Report')
 class HelloResource(Resource):
@@ -197,9 +198,6 @@ class ReportsResource(Resource):
 
         return reports
         pass
-
-
-
 
 @api.route('/report/<int:id>')
 class ReportResource(Resource):
@@ -235,9 +233,8 @@ class ReportResource(Resource):
 
         pass
       
-      
-      
-@api.route("/upload", methods=['POST'])
+       
+@api.route("/upload",)
 class Upload(Resource):
     @api.marshal_with(report_model)
     @api.expect(report_model)
@@ -257,14 +254,14 @@ class Upload(Resource):
                 title = request.form.get('title')
                 description = request.form.get('description')
                 location = request.form.get('location')
-                    # reporter_email = request.form.get('reporter_email')
+                reporter_email = request.form.get('reporter_email')
                     # Create a new Report object and save it to the database
                 report = Report(
                     title=title,
                     description=description,
                     media=upload_result['url'],
                     location=location,
-                        # email=email
+                    reporter_email=email
                     )
                 db.session.add(report)
                 db.session.commit()
@@ -272,21 +269,15 @@ class Upload(Resource):
             return jsonify({'error': 'No file provided.'}), 400
         return jsonify({'error': 'Method not allowed.'}), 405
 
-
-    
 @app.shell_context_processor
 def make_shell_context():
     return {
         "db": db,
-        "Admin": Admin,
+        "Role": Role,
         "User": User,
         "Report": Report,
         "Call": Call,
     }
-  
-  
-  
-
 
 
 if __name__ == '__main__':
