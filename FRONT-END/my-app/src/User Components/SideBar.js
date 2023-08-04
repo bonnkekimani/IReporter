@@ -22,6 +22,7 @@ function SideBar () {
             <li>
                 <a href='/denied'>Denied</a>
             </li>
+            
         </ul>
        
     </nav>
