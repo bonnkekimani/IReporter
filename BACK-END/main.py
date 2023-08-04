@@ -42,6 +42,7 @@ report_model=api.model(
         "description":fields.String(),
         "media":fields.String(),
         "location":fields.String(),
+        "reporter_email":fields.String(),
     }
 )
 
@@ -234,11 +235,11 @@ class ReportResource(Resource):
         pass
       
        
-@api.route("/upload",)
+@api.route("/upload", methods=['POST'])
 class Upload(Resource):
     @api.marshal_with(report_model)
     @api.expect(report_model)
-    @jwt_required()
+    # @jwt_required()
     def post(self):
         # def post(self):
         api.logger.info('in upload route')
@@ -254,14 +255,14 @@ class Upload(Resource):
                 title = request.form.get('title')
                 description = request.form.get('description')
                 location = request.form.get('location')
-                reporter_email = request.form.get('reporter_email')
+                # reporter_email = request.form.get('reporter_email')
                     # Create a new Report object and save it to the database
                 report = Report(
                     title=title,
                     description=description,
                     media=upload_result['url'],
                     location=location,
-                    reporter_email=email
+                    # reporter_email=email
                     )
                 db.session.add(report)
                 db.session.commit()

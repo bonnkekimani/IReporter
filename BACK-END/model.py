@@ -70,7 +70,7 @@ class Report(db.Model):
     media = db.Column(db.Text, nullable=False)
     location = db.Column(db.Text, nullable=False)
 
-    reporter_email = db.Column(db.String(50), nullable=False)
+    # reporter_email = db.Column(db.String(50))
 
     # Foreign key column to link the report to the user who reported it
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -92,6 +92,7 @@ class Report(db.Model):
         # Save the report to the database
         db.session.add(self)
         db.session.commit()
+        
  
 
 
