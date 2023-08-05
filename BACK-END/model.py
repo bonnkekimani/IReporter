@@ -23,10 +23,10 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     firstName = db.Column(db.String(50), nullable=False)
     lastName = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
     gender = db.Column(db.String(50))
-    phoneNumber = db.Column(db.String(255), nullable=False)
+    phoneNumber = db.Column(db.String(12), nullable=False)
 
     calls = db.relationship('Call', backref='calls')
     roles = db.relationship('Role', secondary=user_roles, backref=db.backref('users', lazy='dynamic'))
@@ -70,13 +70,17 @@ class Report(db.Model):
     media = db.Column(db.Text, nullable=False)
     location = db.Column(db.Text, nullable=False)
 
-    # reporter_email = db.Column(db.String(50))
+    reporter_email = db.Column(db.String(50))
 
     # Foreign key column to link the report to the user who reported it
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
         return f"<Report {self.title}>"
+    
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
     def save(self, reporter_user=None):
         if reporter_user:
@@ -91,6 +95,16 @@ class Report(db.Model):
 
         # Save the report to the database
         db.session.add(self)
+        db.session.commit()
+    
+    def update(self,title,description,media,location,user_id,reporter_email):
+        self.title = title
+        self.description = description
+        self.media = media
+        self.location = location
+        self.user_id = user_id
+        self.reporter_email = reporter_email
+        
         db.session.commit()
         
  
