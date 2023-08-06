@@ -1,8 +1,9 @@
 import os
-from flask import Flask,request,jsonify, render_template
+from flask import Flask,request,jsonify, render_template,make_response
 from flask_restx import Api, Resource,fields
 from config import DevConfig
 from exts import db
+from flask_cors import CORS
 from model import User, Role, Report, Call
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -18,7 +19,9 @@ load_dotenv()
 
 
 app = Flask(__name__)
+CORS(app)
 app.config.from_object(DevConfig)
+
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db.init_app(app)
 
@@ -80,41 +83,41 @@ class Signup(Resource):
     # @api.marshal_with(signup_model)
     @api.expect(signup_model)
     def post(self):
-        # Get the user request.form from the request's JSON body
-        request.form = request.get_json()
+        # Get the user data from the request's JSON body
+        data = request.get_json()
 
-        email=request.form.get('email')
+        email=data.get('email')
         db_user=User.query.filter_by(email=email).first()
         
         if db_user is not None:
             return jsonify({"message":f"User with email {email} already exists"})
             
-        # Create a new User object with the provided request.form
+        # Create a new User object with the provided data
         new_user = User(
-            firstName=request.form.get("firstName"),
-            lastName=request.form.get("lastName"),
-            email=request.form.get("email"),
-            password=generate_password_hash(request.form.get('password')),
-            gender=request.form.get("gender"),
-            phoneNumber=request.form.get("phoneNumber")
+            firstName=data.get("firstName"),
+            lastName=data.get("lastName"),
+            email=data.get("email"),
+            password=generate_password_hash(data.get('password')),
+            gender=data.get("gender"),
+            phoneNumber=data.get("phoneNumber")
         )
 
         # Assign the default role (e.g., "user") to the new user
         user_role = Role.query.filter_by(name='User').first()
         new_user.roles.append(user_role)
 
-        try:
-            # Add the new_user to the request.formbase and commit the changes
+        # try:
+            # Add the new_user to the database and commit the changes
             # db.session.add(new_user)
             # db.session.commit()
-            new_user.save()
+        new_user.save()
 
                 # Return a success response to the client
-            return jsonify({"message": "User successfully registered!"}), 201
-        except Exception as e:
-            # Handle errors, e.g., request.formbase or validation errors
-            db.session.rollback()
-            return jsonify({"error": str(e)}), 500
+        return make_response(jsonify({"message": "User successfully registered!"}), 201)
+        # except Exception as e:
+        #     # Handle errors, e.g., database or validation errors
+        #     db.session.rollback()
+        #     return jsonify({"error": str(e)}), 500
 
 
 
@@ -122,10 +125,10 @@ class Signup(Resource):
 class Login(Resource):
     @api.expect(login_model)
     def post(self):
-        request.form = request.get_json()
+        data = request.get_json()
 
-        email = request.form.get("email")
-        password = request.form.get("password")
+        email = data.get("email")
+        password = data.get("password")
 
         db_user = User.query.filter_by(email=email).first()
 
@@ -153,33 +156,33 @@ class Login(Resource):
 
 
 
-# Route to post a new role to the request.formbase
+# Route to post a new role to the database
 @api.route("/add_role")
 class AddRole(Resource):
     @api.expect(add_role_model)
     @jwt_required()
     def post(self):
-        request.form = request.get_json()
+        data = request.get_json()
         
-        name = request.form.get("name")
+        name = data.get("name")
 
-        # Check if the role name already exists in the request.formbase
+        # Check if the role name already exists in the database
         existing_role = Role.query.filter_by(name=name).first()
         if existing_role:
             return jsonify({"message": "Role with this name already exists"}), 400
 
-        # Create a new Role object with the provided request.form
+        # Create a new Role object with the provided data
         new_role = Role(name=name)
 
         try:
-            # Add the new_role to the request.formbase and commit the changes
+            # Add the new_role to the database and commit the changes
             db.session.add(new_role)
             db.session.commit()
 
             # Return a success response to the client
             return jsonify({"message": "Role added successfully"}), 201
         except Exception as e:
-            # Handle errors, e.g., request.formbase or validation errors
+            # Handle errors, e.g., database or validation errors
             db.session.rollback()
             return jsonify({"error": str(e)}), 500
 
@@ -217,12 +220,12 @@ class Upload(Resource):
                     # Upload the image to Cloudinary
                 upload_result = cloudinary.uploader.upload(file_to_upload)
                 api.logger.info(upload_result)
-                    # Get other form request.form
-                title = request.form.get('title')
-                description = request.form.get('description')
-                location = request.form.get('location')
-                # reporter_email = request.form.get('reporter_email')
-                    # Create a new Report object and save it to the request.formbase
+                    # Get other form data
+                title = data.get('title')
+                description = data.get('description')
+                location = data.get('location')
+                # reporter_email = data.get('reporter_email')
+                    # Create a new Report object and save it to the database
                 report = Report(
                     title=title,
                     description=description,
@@ -278,7 +281,7 @@ class Media(Resource):
             # Upload the image to Cloudinary
             upload_result = cloudinary.uploader.upload(file_to_upload)
             app.logger.info(upload_result)
-            # Update the report media URL in the request.formbase
+            # Update the report media URL in the database
             report.media = upload_result['url']
             db.session.commit()
             return jsonify({"message":"file updated successfully!"})
@@ -292,14 +295,14 @@ class MediaReport(Resource):
         report = Report.query.get(report_id)
         if not report:
             return jsonify({'error': 'Report not found.'}), 404
-        # Get the updated request.form from the request
-        # request.form = request.json
-        # Update the report fields with the new request.form
-        report.title = request.form.get('title', report.title)
-        report.description = request.form.get('description', report.description)
-        report.location = request.form.get('location', report.location)
-        report.reporter_email = request.form.get('reporter_email', report.reporter_email)
-        # Commit the changes to the request.formbase
+        # Get the updated data from the request
+        # data = request.json
+        # Update the report fields with the new data
+        report.title = data.get('title', report.title)
+        report.description = data.get('description', report.description)
+        report.location = data.get('location', report.location)
+        report.reporter_email = data.get('reporter_email', report.reporter_email)
+        # Commit the changes to the database
         db.session.commit()
         return jsonify({'message': 'Report updated successfully.'})
         
