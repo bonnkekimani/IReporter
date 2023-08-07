@@ -3,7 +3,7 @@ from flask import Flask,request,jsonify, render_template
 from flask_restx import Api, Resource,fields
 from config import DevConfig
 from exts import db
-from model import User, Role, Report, Call
+from model import User, Role, Report, Call, user_roles
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash,check_password_hash
 from werkzeug.utils import secure_filename
@@ -110,38 +110,45 @@ def login():
     user = User.query.filter_by(email=email, password=password).first()
 
     if user:
-        # Check if the user has the 'user' role
-        user_role = Role.query.filter_by(name='user').first()
-        is_user = user_role in user.roles
+        # Query the roles associated with the user
+        roles = db.session.query(Role.name).join(user_roles).filter(user_roles.c.user_id == user.id).all()
+        roles = [role[0] for role in roles]
 
-        if is_user:
-            return jsonify({"message": f"User {user.firstName} logged in successfully"}), 200
+        if "Admin" in roles:
+            # Redirect to the admin page
+            # return redirect("/admin-page")
+            return jsonify({"message": "logged in as an admin"}), 401
+        elif "Normal user" in roles:
+            # Redirect to the user page
+            # return redirect("/user-page")
+            return jsonify({"message": "logged in as a Normal User"}), 401
         else:
+            # If no role matches, return an error response
             return jsonify({"message": "Invalid credentials"}), 401
     else:
+        # If user is not found, return an error response
         return jsonify({"message": "Invalid credentials"}), 401
 
 
+# @app.route("/admin_login", methods=["POST"])
+# def admin_login():
+#     data = request.json
+#     email = data.get("email")
+#     password = data.get("password")
 
-@app.route("/admin_login", methods=["POST"])
-def admin_login():
-    data = request.json
-    email = data.get("email")
-    password = data.get("password")
+#     admin = Admin.query.filter_by(email=email, password=password).first()
 
-    admin = Admin.query.filter_by(email=email, password=password).first()
+#     if admin:
+#         # Check if the admin has the 'admin' role
+#         admin_role = Role.query.filter_by(name='admin').first()
+#         is_admin = admin_role in admin.roles
 
-    if admin:
-        # Check if the admin has the 'admin' role
-        admin_role = Role.query.filter_by(name='admin').first()
-        is_admin = admin_role in admin.roles
-
-        if is_admin:
-            return jsonify({"message": "Admin login successful"}), 200
-        else:
-            return jsonify({"message": "Invalid credentials"}), 401
-    else:
-        return jsonify({"message": "Invalid credentials"}), 401
+#         if is_admin:
+#             return jsonify({"message": "Admin login successful"}), 200
+#         else:
+#             return jsonify({"message": "Invalid credentials"}), 401
+#     else:
+#         return jsonify({"message": "Invalid credentials"}), 401
 
 
 

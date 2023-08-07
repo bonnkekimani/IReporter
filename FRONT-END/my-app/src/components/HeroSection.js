@@ -2,6 +2,8 @@ import React from 'react';
 import '../App.css';
 import { Button } from './Button';
 import './HeroSection.css';
+import Signup from './signup';
+import { Link } from 'react-router-dom';
 
 function HeroSection() {
   return (
@@ -10,13 +12,27 @@ function HeroSection() {
       <h1>STOP CORRUPTION</h1>
       <p>Ripoti ufisadi leo</p>
       <div className='hero-btns'>
-        <Button
+        {/* <Button
           className='btns'
           buttonStyle='btn--outline'
           buttonSize='btn--large'
         >
           LOGIN
+        </Button> */}
+
+        <Link to={'login'} className='btn-mobile'>
+
+        <Button 
+        
+          className='btns'
+          buttonStyle='btn--outline'
+          buttonSize='btn--large'
+        >
+          login
         </Button>
+        </Link>
+
+        <Link to={'sign-up'} className='btn-mobile'>
         <Button
           className='btns'
           buttonStyle='btn--primary'
@@ -25,6 +41,7 @@ function HeroSection() {
         >
           REGISTER
         </Button>
+        </Link>
       </div>
     </div>
   );
