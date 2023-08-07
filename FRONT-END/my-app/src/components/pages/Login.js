@@ -44,7 +44,7 @@ const LoginPage=()=>{
                 {...register("email",{required:true,maxLength:25})}/>
             </Form.Group>
             {errors.email && <p style={{color:"red"}}><small>email required</small></p>}
-           <br></br>
+            <br></br>
             <Form.Group>
                 <Form.Label>Password</Form.Label>
                 <Form.Control type="password" placeholder="Your password"
