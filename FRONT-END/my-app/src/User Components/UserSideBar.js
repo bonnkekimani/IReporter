@@ -1,4 +1,3 @@
-
 import React from 'react'
 import PersonPinIcon from '@mui/icons-material/PersonPin';
 import "./style.css";

@@ -4,7 +4,7 @@ from flask_restx import Api, Resource,fields
 from config import DevConfig
 from exts import db
 from flask_cors import CORS
-from model import User, Role, Report, Call
+from model import User, Role, Report, Call, user_roles
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -147,25 +147,32 @@ class Signup(Resource):
 
 
 
-@api.route("/login")
-class Login(Resource):
-    @api.expect(login_model)
-    def post(self):
-        data = request.get_json()
-
-        email = data.get("email")
-        password = data.get("password")
-
-        db_user = User.query.filter_by(email=email).first()
-
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+    user = User.query.filter_by(email=email, password=password).first()
+    if user:
+        # Query the roles associated with the user
+        roles = db.session.query(Role.name).join(user_roles).filter(user_roles.c.user_id == user.id).all()
+        roles = [role[0] for role in roles]
         if "Admin" in roles:
+            # Redirect to the admin page
+            # return redirect("/admin-page")
             return jsonify({"message": "logged in as an admin", "role": "Admin"}), 201
         elif "Normal user" in roles:
-            
+            # Redirect to the user page
+            # return redirect("/user-page")
             return jsonify({"message": "logged in as a Normal User", "role": "Normal user"}), 201
+
         else:
+            # If no role matches, return an error response
             return jsonify({"message": "Invalid credentials"}), 401
 
+    else:
+        # If user is not found, return an error response
+        return jsonify({"message": "Invalid credentials"}), 401
 
 # Route to post a new role to the database
 @api.route("/add_role")
