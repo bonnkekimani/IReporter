@@ -1,7 +1,7 @@
 
 
 import React, { useState } from 'react';
-import Card from './Card';
+import Card from './AdminCard';
 
 function CardsContainer() {
     const [cards, setCards] = useState([
@@ -25,14 +25,6 @@ function CardsContainer() {
         report: 'ENVIRONMENTAL DEGRADATION',
         imgSrc: 'https://images.unsplash.com/photo-1598287635098-0a3d52c908b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZGVmb3Jlc3RhdGlvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60',
         reportStatus: 'pending',
-    },
-    {
-        title:"REPORT",
-        reporter:"Anonymous",
-        report:"INADEQUATE HEALTHCARE FACILITIES",
-        imgSrc:"https://images.unsplash.com/photo-1541799026-89a982d6ecc7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y3Jvd2RlZCUyMGhvc3BpdGFsfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60",
-        reportStatus:"420",
-
     },
     {
         title:"REPORT",

@@ -25,8 +25,10 @@ CORS(app)
 app.config.from_object(DevConfig)
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db.init_app(app)
+
 migrate = Migrate(app, db)
 JWTManager(app)
+
 api = Api(app, doc="/docs")
 # Configuring Cloudinary
 cloudinary.config(
@@ -70,12 +72,17 @@ add_role_model=api.model(
         "name":fields.String(),
     }
 )
+
+
 # Route to get all roles by name
 @app.route("/roles", methods=["GET"])
 def get_roles():
     roles = Role.query.all()
     roles_list = [{"name": role.name} for role in roles]
     return jsonify({"roles": roles_list})
+
+
+
 # API route for user registration
 # API route for user registration
 @app.route("/signup", methods=["POST"])
@@ -91,9 +98,11 @@ def signup():
         gender=data["gender"],
         phoneNumber=data["phoneNumber"],
     )
+
     # Assign the default role (e.g., "user") to the new user
     user_role = Role.query.filter_by(name='Normal user').first()
     new_user.roles.append(user_role)
+
     try:
         # Add the new_user to the database and commit the changes
         db.session.add(new_user)
@@ -104,6 +113,8 @@ def signup():
         # Handle errors, e.g., database or validation errors
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+
 @app.route("/login", methods=["POST"])
 def login():
     data = request.json
@@ -122,12 +133,15 @@ def login():
             # Redirect to the user page
             # return redirect("/user-page")
             return jsonify({"message": "logged in as a Normal User", "role": "Normal user"}), 201
+
         else:
             # If no role matches, return an error response
             return jsonify({"message": "Invalid credentials"}), 401
+
     else:
         # If user is not found, return an error response
         return jsonify({"message": "Invalid credentials"}), 401
+
 # Route to post a new role to the database
 @api.route("/add_role")
 class AddRole(Resource):
@@ -153,10 +167,16 @@ class AddRole(Resource):
             # Handle errors, e.g., database or validation errors
             db.session.rollback()
             return jsonify({"error": str(e)}), 500
+
+
+
+
 @api.route("/Report")
 class HelloResource(Resource):
     def get(self):
         return {"message": "Hello World"}
+
+
 # http methods on report.
 @api.route("/reports")
 class ReportsResource(Resource):
@@ -201,6 +221,9 @@ class Upload(Resource):
                 return jsonify(upload_result)
             return jsonify({"error": "No file provided."}), 400
         return jsonify({"error": "Method not allowed."}), 405
+
+
+
 @api.route('/report/<int:id>')
 class ReportResource(Resource):
     @api.marshal_with(report_model)
@@ -267,5 +290,7 @@ def make_shell_context():
         "Report": Report,
         "Call": Call,
     }
+
+
 if __name__ == "__main__":
     app.run()
