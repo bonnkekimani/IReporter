@@ -8,6 +8,7 @@ import Products from './components/pages/Products';
 // import SignUp from './components/pages/SignUp';
 import Signup from './components/signup';
 import LoginForm from './components/login';
+import UserPage from './User Components/UserPage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path='/products' element={<Products />} />
           <Route path='/sign-up' element={<Signup />} />
           <Route path='/login' element={<LoginForm />} />
+          <Route path='/userpage' exact element={<UserPage />} />
         </Routes>
       </Router>
     </>
