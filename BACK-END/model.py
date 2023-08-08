@@ -1,72 +1,72 @@
-from exts import db
+# from exts import db
 
-#admin model class
-"""
-class Admin:
-    id:integer
-    firstName:string
-    lastName:string
-    email:string
-    password:string
-    gender:string
-"""
-class Admin(db.Model):
-    __tablename__ = 'Admin'
-    id = db.Column(db.Integer, primary_key=True)
-    firstName = db.Column(db.String(50), nullable=False)
-    lastName = db.Column(db.String(50),nullable=False)
-    email = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(255),nullable=False)
-    gender = db.Column(db.String(50), nullable=False)
-
-
-    def __repr__(self):
-        return f"<Admin {self.firstName}>"
-
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
-
-#User model class
-"""
-class User:
-    id:integer
-    firstName:string
-    lastName:string
-    email:string
-    password:string
-    gender:string
-"""
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    firstName = db.Column(db.String(50), nullable=False)  
-    lastName = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(50),  nullable=False, unique=True)
-    password = db.Column(db.String(255),nullable=False)
-    gender = db.Column(db.String(50))
-
-    calls =db.relationship('Call', backref='calls')
+# #admin model class
+# """
+# class Admin:
+#     id:integer
+#     firstName:string
+#     lastName:string
+#     email:string
+#     password:string
+#     gender:string
+# """
+# class Admin(db.Model):
+#     __tablename__ = 'Admin'
+#     id = db.Column(db.Integer, primary_key=True)
+#     firstName = db.Column(db.String(50), nullable=False)
+#     lastName = db.Column(db.String(50),nullable=False)
+#     email = db.Column(db.String(50), nullable=False)
+#     password = db.Column(db.String(255),nullable=False)
+#     gender = db.Column(db.String(50), nullable=False)
 
 
-    def __repr__(self):
-        return f"<User {self.firstName}>"
+#     def __repr__(self):
+#         return f"<Admin {self.firstName}>"
 
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
+#     def save(self):
+#         db.session.add(self)
+#         db.session.commit()
 
-#Report model class
-class Report(db.Model):
-    __tablename__ = 'reports'
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.Text, nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    media = db.Column(db.Text, nullable=False)
-    location = db.Column(db.Text,nullable=False)
-    # from flask_sqlalchemy import SQLAlchemy
-# from sqlalchemy import Column, Integer, String, ForeignKey, Table
-from sqlalchemy.orm import relationship
+# #User model class
+# """
+# class User:
+#     id:integer
+#     firstName:string
+#     lastName:string
+#     email:string
+#     password:string
+#     gender:string
+# """
+# class User(db.Model):
+#     __tablename__ = 'users'
+#     id = db.Column(db.Integer, primary_key=True)
+#     firstName = db.Column(db.String(50), nullable=False)  
+#     lastName = db.Column(db.String(50), nullable=False)
+#     email = db.Column(db.String(50),  nullable=False, unique=True)
+#     password = db.Column(db.String(255),nullable=False)
+#     gender = db.Column(db.String(50))
+
+#     calls =db.relationship('Call', backref='calls')
+
+
+#     def __repr__(self):
+#         return f"<User {self.firstName}>"
+
+#     def save(self):
+#         db.session.add(self)
+#         db.session.commit()
+
+# #Report model class
+# class Report(db.Model):
+#     __tablename__ = 'reports'
+#     id = db.Column(db.Integer, primary_key=True)
+#     title = db.Column(db.Text, nullable=False)
+#     description = db.Column(db.Text, nullable=False)
+#     media = db.Column(db.Text, nullable=False)
+#     location = db.Column(db.Text,nullable=False)
+#     # from flask_sqlalchemy import SQLAlchemy
+# # from sqlalchemy import Column, Integer, String, ForeignKey, Table
+# from sqlalchemy.orm import relationship
 
 from exts import db
 
@@ -198,20 +198,20 @@ class Report(db.Model):
         
         db.session.commit()
 #calls model class
-class Call(db.Model):
-    __tablename__ = 'calls'
-    id = db.Column(db.Integer, primary_key=True)
-    time = db.Column(db.String(50))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
+# class Call(db.Model):
+#     __tablename__ = 'calls'
+#     id = db.Column(db.Integer, primary_key=True)
+#     time = db.Column(db.String(50))
+#     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+#     created_at = db.Column(db.DateTime, server_default=db.func.now())
 
 
-    def __repr__(self):
-        return f"<{self.time}>"
+#     def __repr__(self):
+#         return f"<{self.time}>"
 
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
+#     def save(self):
+#         db.session.add(self)
+#         db.session.commit()
 
 
 

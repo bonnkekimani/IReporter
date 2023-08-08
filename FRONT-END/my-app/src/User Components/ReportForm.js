@@ -52,6 +52,14 @@ const Reportform = () => {
         <input type="text" id="title" name="title" value={formData.title} onChange={handleInputChange} required />
       </div>
       <div>
+        <label htmlFor="location">Category:</label>
+        <select id="categories" name="categoriess">
+          <option value="volvo">Red Flag</option>
+          <option value="saab">Intervention</option>
+          
+        </select>
+      </div>
+      <div>
         <label htmlFor="description">Description:</label>
         <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} required />
       </div>
@@ -59,15 +67,7 @@ const Reportform = () => {
         <label htmlFor="location">Location:</label>
         <input type="text" id="location" name="location" value={formData.location} onChange={handleInputChange} required />
       </div>
-      <div>
-        <label htmlFor="location">Category:</label>
-        <select id="categories" name="categoriess">
-          <option value="volvo">Red Flag</option>
-          <option value="saab">Intervention</option>
-          
-        </select>
-        {/* <input type="input" id="location" name="Category" value={formData.location} onChange={handleInputChange} required /> */}
-      </div>
+      
       <div>
         <label htmlFor="reporter_email">Reporter Email:</label>
         <input type="email" id="reporter_email" name="reporter_email" value={formData.reporter_email} onChange={handleInputChange} required />

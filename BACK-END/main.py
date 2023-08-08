@@ -4,52 +4,49 @@ from flask_restx import Api, Resource,fields
 from config import DevConfig
 from exts import db
 from flask_cors import CORS
-from model import User, Role, Report, Call
+from model import User, Role, Report, Call, user_roles
 from flask_migrate import Migrate
-from werkzeug.security import generate_password_hash,check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from flask_jwt_extended import JWTManager,create_access_token,create_refresh_token,jwt_required
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    create_refresh_token,
+    jwt_required,
+)
 from werkzeug import *
 from flask_sqlalchemy import SQLAlchemy
 import cloudinary
 from cloudinary.uploader import upload
 from dotenv import load_dotenv
-from config import DevConfig
 load_dotenv()
-
-
 app = Flask(__name__)
 CORS(app)
 app.config.from_object(DevConfig)
-
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db.init_app(app)
-
-migrate=Migrate(app,db)
+migrate = Migrate(app, db)
 JWTManager(app)
-
-api = Api(app,doc='/docs')
+api = Api(app, doc="/docs")
 # Configuring Cloudinary
 cloudinary.config(
-    cloud_name=os.getenv('CLOUD_NAME'),
-    api_key=os.getenv('API_KEY'),
-    api_secret=os.getenv('API_SECRET')
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("API_KEY"),
+    api_secret=os.getenv("API_SECRET"),
 )
-
-#model serializer
-report_model=api.model(
+# model serializer
+report_model = api.model(
     "Report",
     {
-        "id":fields.Integer(),
-        "title":fields.String(),
-        "description":fields.String(),
-        "media":fields.String(),
-        "location":fields.String(),
-        "reporter_email":fields.String(),
-    }
+        "id": fields.Integer(),
+        "title": fields.String(),
+        "description": fields.String(),
+        "media": fields.String(),
+        "location": fields.String(),
+        "reporter_email": fields.String(),
+    },
 )
-
-signup_model=api.model(
+signup_model = api.model(
     "SignUp",
     {
         "firstName":fields.String(),
@@ -58,16 +55,13 @@ signup_model=api.model(
         "gender":fields.String(),
         "password":fields.String(),
         "phoneNumber":fields.String()
-
     }
 )
-
-login_model=api.model(
+login_model = api.model(
     "Login",
     {
         "email":fields.String(),
         "password":fields.String(),
-
     }
 )
 add_role_model=api.model(
@@ -76,86 +70,64 @@ add_role_model=api.model(
         "name":fields.String(),
     }
 )
-
+# Route to get all roles by name
+@app.route("/roles", methods=["GET"])
+def get_roles():
+    roles = Role.query.all()
+    roles_list = [{"name": role.name} for role in roles]
+    return jsonify({"roles": roles_list})
 # API route for user registration
-@api.route("/signup")
-class Signup(Resource):
-    # @api.marshal_with(signup_model)
-    @api.expect(signup_model)
-    def post(self):
-        # Get the user data from the request's JSON body
-        data = request.get_json()
-
-        email=data.get('email')
-        db_user=User.query.filter_by(email=email).first()
-        
-        if db_user is not None:
-            return jsonify({"message":f"User with email {email} already exists"})
-            
-        # Create a new User object with the provided data
-        new_user = User(
-            firstName=data.get("firstName"),
-            lastName=data.get("lastName"),
-            email=data.get("email"),
-            password=generate_password_hash(data.get('password')),
-            gender=data.get("gender"),
-            phoneNumber=data.get("phoneNumber")
-        )
-
-        # Assign the default role (e.g., "user") to the new user
-        user_role = Role.query.filter_by(name='User').first()
-        new_user.roles.append(user_role)
-
-        # try:
-            # Add the new_user to the database and commit the changes
-            # db.session.add(new_user)
-            # db.session.commit()
-        new_user.save()
-
-                # Return a success response to the client
-        return make_response(jsonify({"message": "User successfully registered!"}), 201)
-        # except Exception as e:
-        #     # Handle errors, e.g., database or validation errors
-        #     db.session.rollback()
-        #     return jsonify({"error": str(e)}), 500
-
-
-
-@api.route("/login")
-class Login(Resource):
-    @api.expect(login_model)
-    def post(self):
-        data = request.get_json()
-
-        email = data.get("email")
-        password = data.get("password")
-
-        db_user = User.query.filter_by(email=email).first()
-
-        if db_user and check_password_hash(db_user.password,password):
-
-            access_token=create_access_token(identity=db_user.email)
-            refresh_token=create_refresh_token(identity=db_user.email)
-
-            return jsonify(
-                {"access_token":access_token,"refresh_token":refresh_token}
-            )
-
-        
-        if db_user:
-            # Check if the user has the 'user' role
-            user_role = Role.query.filter_by(name='user').first()
-            is_user = user_role in user.roles
-
-            if is_user:
-                return jsonify({"message": f"User {user.firstName} logged in successfully"}), 200
-            else:
-                return jsonify({"message": "Invalid credentials"}), 401
+# API route for user registration
+@app.route("/signup", methods=["POST"])
+def signup():
+    # Get the user data from the request's JSON body
+    data = request.json
+    # Create a new User object with the provided data
+    new_user = User(
+        firstName=data["firstName"],
+        lastName=data["lastName"],
+        email=data["email"],
+        password=data["password"],
+        gender=data["gender"],
+        phoneNumber=data["phoneNumber"],
+    )
+    # Assign the default role (e.g., "user") to the new user
+    user_role = Role.query.filter_by(name='Normal user').first()
+    new_user.roles.append(user_role)
+    try:
+        # Add the new_user to the database and commit the changes
+        db.session.add(new_user)
+        db.session.commit()
+        # Return a success response to the client
+        return jsonify({"message": "User successfully registered!"}), 201
+    except Exception as e:
+        # Handle errors, e.g., database or validation errors
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+    user = User.query.filter_by(email=email, password=password).first()
+    if user:
+        # Query the roles associated with the user
+        roles = db.session.query(Role.name).join(user_roles).filter(user_roles.c.user_id == user.id).all()
+        roles = [role[0] for role in roles]
+        if "Admin" in roles:
+            # Redirect to the admin page
+            # return redirect("/admin-page")
+            return jsonify({"message": "logged in as an admin", "role": "Admin"}), 201
+        elif "Normal user" in roles:
+            # Redirect to the user page
+            # return redirect("/user-page")
+            return jsonify({"message": "logged in as a Normal User", "role": "Normal user"}), 201
         else:
+            # If no role matches, return an error response
             return jsonify({"message": "Invalid credentials"}), 401
-
-
-
+    else:
+        # If user is not found, return an error response
+        return jsonify({"message": "Invalid credentials"}), 401
 # Route to post a new role to the database
 @api.route("/add_role")
 class AddRole(Resource):
@@ -165,45 +137,35 @@ class AddRole(Resource):
         data = request.get_json()
         
         name = data.get("name")
-
         # Check if the role name already exists in the database
         existing_role = Role.query.filter_by(name=name).first()
         if existing_role:
             return jsonify({"message": "Role with this name already exists"}), 400
-
         # Create a new Role object with the provided data
         new_role = Role(name=name)
-
         try:
             # Add the new_role to the database and commit the changes
             db.session.add(new_role)
             db.session.commit()
-
             # Return a success response to the client
             return jsonify({"message": "Role added successfully"}), 201
         except Exception as e:
             # Handle errors, e.g., database or validation errors
             db.session.rollback()
             return jsonify({"error": str(e)}), 500
-
-
-
-@api.route('/Report')
+@api.route("/Report")
 class HelloResource(Resource):
     def get(self):
-        return {"message":"Hello World"}
-
+        return {"message": "Hello World"}
 # http methods on report.
-@api.route('/reports')
+@api.route("/reports")
 class ReportsResource(Resource):
     @api.marshal_list_with(report_model)
     def get(self):
         """Get all reports"""
         reports = Report.query.all()
-
         return reports
         pass
-
 @api.route("/upload", methods=['POST'])
 class Upload(Resource):
     # @api.marshal_with(report_model)
@@ -211,13 +173,13 @@ class Upload(Resource):
     # @jwt_required()
     def post(self):
         # def post(self):
-        api.logger.info('in upload route')
-        if request.method == 'POST':
-            file_to_upload = request.files['file']
-        # Updated key from 'file' to 'image'
-            api.logger.info('%s image_to_upload', file_to_upload)
+        api.logger.info("in upload route")
+        if request.method == "POST":
+            file_to_upload = request.files["file"]
+            # Updated key from 'file' to 'image'
+            api.logger.info("%s image_to_upload", file_to_upload)
             if file_to_upload:
-                    # Upload the image to Cloudinary
+                # Upload the image to Cloudinary
                 upload_result = cloudinary.uploader.upload(file_to_upload)
                 api.logger.info(upload_result)
                     # Get other form data
@@ -229,45 +191,35 @@ class Upload(Resource):
                 report = Report(
                     title=title,
                     description=description,
-                    media=upload_result['url'],
+                    media=upload_result["url"],
                     location=location,
                     # reporter_email=email
-                    )
+                )
                 db.session.add(report)
                 db.session.commit()
                 return make_response(jsonify({"message":"media and report uploaded successfully"}))
                 return jsonify(upload_result)
-            return jsonify({'error': 'No file provided.'}), 400
-        return jsonify({'error': 'Method not allowed.'}), 405
-
-
+            return jsonify({"error": "No file provided."}), 400
+        return jsonify({"error": "Method not allowed."}), 405
 @api.route('/report/<int:id>')
 class ReportResource(Resource):
     @api.marshal_with(report_model)
     def get(self,id):
         """get a report by id"""
         report=Report.query.get_or_404(id)
-
         return report
         pass
-
-
     # @api.marshal_with(report_model)
     @jwt_required()
     def delete(self, id):
         """delete a report by id"""
         report_to_delete = Report.query.get_or_404(id)
-
         report_to_delete.delete()
         return jsonify({'message': 'Report deleted successfully.'})
         return report_to_delete, 200
         
-
         pass
-
        
-
-
 @api.route("/media/<int:report_id>", methods=['PATCH'])
 class Media(Resource):
     def patch(self, report_id):
@@ -288,7 +240,6 @@ class Media(Resource):
             return jsonify({"message":"file updated successfully!"})
             return jsonify(upload_result)
         return jsonify({'error': 'No file provided.'}), 400
-
 @api.route("/medias/<int:report_id>", methods=['PATCH'])
 class MediaReport(Resource):
     def patch(self, report_id):
@@ -297,7 +248,7 @@ class MediaReport(Resource):
         if not report:
             return jsonify({'error': 'Report not found.'}), 404
         # Get the updated data from the request
-        # data = request.json
+        data = request.json
         # Update the report fields with the new data
         report.title = data.get('title', report.title)
         report.description = data.get('description', report.description)
@@ -316,8 +267,5 @@ def make_shell_context():
         "Report": Report,
         "Call": Call,
     }
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
- 
