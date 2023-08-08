@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 // import "./Sidebar.css"; // Import the CSS file for sidebar styles
 
-const Sidebar = () => {
+const   Sidebar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const handleLogout = () => {

@@ -6,15 +6,20 @@ from exts import db
 from flask_cors import CORS
 from model import User, Role, Report, Call, user_roles
 from flask_migrate import Migrate
-from werkzeug.security import generate_password_hash,check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from flask_jwt_extended import JWTManager,create_access_token,create_refresh_token,jwt_required
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    create_refresh_token,
+    jwt_required,
+)
 from werkzeug import *
 from flask_sqlalchemy import SQLAlchemy
 import cloudinary
 from cloudinary.uploader import upload
 from dotenv import load_dotenv
-from config import DevConfig
+
 load_dotenv()
 
 
@@ -25,31 +30,31 @@ app.config.from_object(DevConfig)
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db.init_app(app)
 
-migrate=Migrate(app,db)
+migrate = Migrate(app, db)
 JWTManager(app)
 
-api = Api(app,doc='/docs')
+api = Api(app, doc="/docs")
 # Configuring Cloudinary
 cloudinary.config(
-    cloud_name=os.getenv('CLOUD_NAME'),
-    api_key=os.getenv('API_KEY'),
-    api_secret=os.getenv('API_SECRET')
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("API_KEY"),
+    api_secret=os.getenv("API_SECRET"),
 )
 
-#model serializer
-report_model=api.model(
+# model serializer
+report_model = api.model(
     "Report",
     {
-        "id":fields.Integer(),
-        "title":fields.String(),
-        "description":fields.String(),
-        "media":fields.String(),
-        "location":fields.String(),
-        "reporter_email":fields.String(),
-    }
+        "id": fields.Integer(),
+        "title": fields.String(),
+        "description": fields.String(),
+        "media": fields.String(),
+        "location": fields.String(),
+        "reporter_email": fields.String(),
+    },
 )
 
-signup_model=api.model(
+signup_model = api.model(
     "SignUp",
     {
         "firstName":fields.String(),
@@ -62,7 +67,7 @@ signup_model=api.model(
     }
 )
 
-login_model=api.model(
+login_model = api.model(
     "Login",
     {
         "email":fields.String(),
@@ -84,6 +89,17 @@ def get_roles():
     roles = Role.query.all()
     roles_list = [{"name": role.name} for role in roles]
     return jsonify({"roles": roles_list})
+
+
+
+
+# Route to get all roles by name
+@app.route("/roles", methods=["GET"])
+def get_roles():
+    roles = Role.query.all()
+    roles_list = [{"name": role.name} for role in roles]
+    return jsonify({"roles": roles_list})
+
 
 
 
@@ -153,6 +169,7 @@ def login():
         else:
             # If no role matches, return an error response
             return jsonify({"message": "Invalid credentials"}), 401
+
     else:
         # If user is not found, return an error response
         return jsonify({"message": "Invalid credentials"}), 401
@@ -189,13 +206,15 @@ class AddRole(Resource):
 
 
 
-@api.route('/Report')
+
+@api.route("/Report")
 class HelloResource(Resource):
     def get(self):
-        return {"message":"Hello World"}
+        return {"message": "Hello World"}
+
 
 # http methods on report.
-@api.route('/reports')
+@api.route("/reports")
 class ReportsResource(Resource):
     @api.marshal_list_with(report_model)
     def get(self):
@@ -212,13 +231,13 @@ class Upload(Resource):
     # @jwt_required()
     def post(self):
         # def post(self):
-        api.logger.info('in upload route')
-        if request.method == 'POST':
-            file_to_upload = request.files['file']
-        # Updated key from 'file' to 'image'
-            api.logger.info('%s image_to_upload', file_to_upload)
+        api.logger.info("in upload route")
+        if request.method == "POST":
+            file_to_upload = request.files["file"]
+            # Updated key from 'file' to 'image'
+            api.logger.info("%s image_to_upload", file_to_upload)
             if file_to_upload:
-                    # Upload the image to Cloudinary
+                # Upload the image to Cloudinary
                 upload_result = cloudinary.uploader.upload(file_to_upload)
                 api.logger.info(upload_result)
                     # Get other form data
@@ -230,16 +249,17 @@ class Upload(Resource):
                 report = Report(
                     title=title,
                     description=description,
-                    media=upload_result['url'],
+                    media=upload_result["url"],
                     location=location,
                     # reporter_email=email
-                    )
+                )
                 db.session.add(report)
                 db.session.commit()
                 return make_response(jsonify({"message":"media and report uploaded successfully"}))
                 return jsonify(upload_result)
-            return jsonify({'error': 'No file provided.'}), 400
-        return jsonify({'error': 'Method not allowed.'}), 405
+            return jsonify({"error": "No file provided."}), 400
+        return jsonify({"error": "Method not allowed."}), 405
+
 
 
 @api.route('/report/<int:id>')
@@ -319,6 +339,5 @@ def make_shell_context():
     }
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
- 
