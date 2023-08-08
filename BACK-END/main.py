@@ -68,6 +68,16 @@ login_model=api.model(
     }
 )
 
+
+# Route to get all roles by name
+@app.route("/roles", methods=["GET"])
+def get_roles():
+    roles = Role.query.all()
+    roles_list = [{"name": role.name} for role in roles]
+    return jsonify({"roles": roles_list})
+
+
+
 # API route for user registration
 @app.route("/signup", methods=["POST"])
 def signup():
@@ -115,13 +125,10 @@ def login():
         roles = [role[0] for role in roles]
 
         if "Admin" in roles:
-            # Redirect to the admin page
-            # return redirect("/admin-page")
-            return jsonify({"message": "logged in as an admin"}), 401
+            return jsonify({"message": "logged in as an admin", "role": "Admin"}), 201
         elif "Normal user" in roles:
-            # Redirect to the user page
-            # return redirect("/user-page")
-            return jsonify({"message": "logged in as a Normal User"}), 401
+            
+            return jsonify({"message": "logged in as a Normal User", "role": "Normal user"}), 201
         else:
             # If no role matches, return an error response
             return jsonify({"message": "Invalid credentials"}), 401
