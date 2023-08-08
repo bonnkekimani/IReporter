@@ -34,10 +34,10 @@ const LoginForm = () => {
       // Check the user's role
       if (data.role === "Admin" && role === "Admin") {
         // Redirect to the sign-up page for admin
-        navigate("/sign-up");
+        navigate("/adminpage");
       } else if (data.role === "Normal user" && role === "Normal user") {
         // Redirect to the services page for normal user
-        navigate("/services");
+        navigate("/userpage");
       } else {
         // Alert the user about an invalid role selection
         alert("Invalid role selection.");
