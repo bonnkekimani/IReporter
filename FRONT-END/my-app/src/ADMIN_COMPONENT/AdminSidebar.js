@@ -16,12 +16,12 @@ const   Sidebar = () => {
         <div className="logo">I REPORTER</div>
         <ul className="menu">
             <li className="menu-item">
-            <NavLink exact to="/" activeClassName="active">
-                Admin Login
+            <NavLink exact to="/map" activeClassName="active">
+                Admin Map
             </NavLink>
             </li>
             <li className="menu-item">
-            <NavLink to="/Admin" activeClassName="active">
+            <NavLink to="/allreports" activeClassName="active">
                 View Reports
             </NavLink>
             </li>

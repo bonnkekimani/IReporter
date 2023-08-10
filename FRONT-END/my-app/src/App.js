@@ -30,7 +30,7 @@ function App() {
           <Route path='/reportform' element={<ReportForm />} />
           <Route path='/reportlist' element={<Reportlist />} />
           <Route path='/adminpage' element={<AdminPage />} />
-          <Route path='/status' element={<Map />} />
+          <Route path='/map' element={<Map />} />
           <Route path='/userpage' exact element={<UserPage />} />
           <Route path='/reportform' exact element={<ReportForm />} />
           <Route path='/allreports' exact element={<Reports />} />

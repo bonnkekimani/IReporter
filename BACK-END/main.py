@@ -47,7 +47,7 @@ report_model = api.model(
         "title": fields.String(),
         "description": fields.String(),
         "location": fields.String(),
-        "category": fields.String(),
+        "media": fields.String(),
         "reporter_email": fields.String(),
         "category": fields.String(),
         "status": fields.String(),
@@ -93,49 +93,33 @@ def get_roles():
 
 
 # API route for user registration
-# API route for user registration
-@api.route("/signup", methods=["POST"])
-class Signup(Resource):
-    @api.expect(signup_model)
-    def post(self):
-        # Get the user data from the request's JSON body
-        data = request.get_json()
-
-        email=data.get('email')
-        user=User.query.filter_by(email=email).first()
-
-        if user is not None:
-            return jsonify({"message":f"User with email {email} already exists"})
-            
-
-        # Create a new User object with the provided data
-        new_user = User(
-            firstName=data.get("firstName"),
-            lastName=data.get("lastName"),
-            email=data.get("email"),
-            password=generate_password_hash(data.get('password')),
-            gender=data.get("gender"),
-            phoneNumber=data.get("phoneNumber")
-        )
-
-        # Assign the default role (e.g., "user") to the new user
-        user_role = Role.query.filter_by(name='Normal user').first()
-        new_user.roles.append(user_role)
-        
-
-        # try:
-        #     # Add the new_user to the database and commit the changes
-        #     db.session.add(new_user)
-        #     db.session.commit()
-        new_user.save()
-
-            # Return a success response to the client
-        return make_response(jsonify({"message": "User successfully registered!"}), 201)
-        # except Exception as e:
-        #     # Handle errors, e.g., database or validation errors
-        #     db.session.rollback()
-        #     return jsonify({"error": str(e)}), 500
-
+@app.route("/signup", methods=["POST"])
+def signup():
+    # Get the user data from the request's JSON body
+    data = request.json
+    # Create a new User object with the provided data
+    new_user = User(
+        firstName=data["firstName"],
+        lastName=data["lastName"],
+        email=data["email"],
+        password=data["password"],
+        gender=data["gender"],
+        phoneNumber=data["phoneNumber"],
+    )
+    # Assign the default role (e.g., "user") to the new user
+    user_role = Role.query.filter_by(name='Admin').first()
+    new_user.roles.append(user_role)
+    try:
+        # Add the new_user to the database and commit the changes
+        db.session.add(new_user)
+        db.session.commit()
+        # Return a success response to the client
+        return jsonify({"message": "User successfully registered!"}), 201
+    except Exception as e:
+        # Handle errors, e.g., database or validation errors
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+    
 
 @api.route("/login", methods=["POST"])
 class Login(Resource):
@@ -236,16 +220,13 @@ class Upload(Resource):
             file_to_upload = request.files["file"]
             if file_to_upload:
                 upload_result = cloudinary.uploader.upload(file_to_upload)
-
                 title = request.form.get('title')
                 description = request.form.get('description')
                 location = request.form.get('location')
                 reporter_email = request.form.get('reporter_email')
                 category = request.form.get('category')
                 status = request.form.get('status')
-
                 user = User.query.filter_by(email=reporter_email).first()
-
                 if user:
                     report = Report(
                         title=title,
@@ -257,7 +238,6 @@ class Upload(Resource):
                         status=status,
                         user_id=user.id
                     )
-
                     db.session.add(report)
                     db.session.commit()
                     return make_response(jsonify({"message": "Media and report uploaded successfully"}), 201)
@@ -266,7 +246,7 @@ class Upload(Resource):
             else:
                 return jsonify({"error": "No file provided."}), 400
         return jsonify({"error": "Method not allowed."}), 405
-
+    
 
 @app.route('/reports/<int:report_id>/status', methods=['PATCH'])
 def update_report_status(report_id):

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import "./style.css";
-
 const Reportform = () => {
   const [formData, setFormData] = useState({
     title: '',
@@ -11,7 +10,6 @@ const Reportform = () => {
     status:'Select Status',
     file: null,
   });
-
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({
@@ -19,7 +17,6 @@ const Reportform = () => {
       [name]: value,
     });
   };
-
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setFormData({
@@ -27,16 +24,9 @@ const Reportform = () => {
       file,
     });
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const form = new FormData();
-    // Append form data
-    for (const key in formData) {
-      if (formData.hasOwnProperty(key)) {
-        form.append(key, formData[key]);
-      }
-    }
+    const form = new FormData(event.target);
     try {
       const response = await fetch('/upload', {
         method: 'POST',
@@ -53,7 +43,6 @@ const Reportform = () => {
       console.error('Error:', error);
     }
   };
-
   return (
     <form onSubmit={handleSubmit}>
       <div>
@@ -91,10 +80,8 @@ const Reportform = () => {
     <option value="submitted">Submitted</option>
   </select>
 </div>
-
       <button type="submit">Upload Report</button>
     </form>
   );
 };
-
 export default Reportform;
