@@ -74,7 +74,7 @@ const Reports = () => {
           },
           body: JSON.stringify(emailData),
         });
-// console.log('emailData');
+
         if (emailResponse.ok) {
           console.log('Email sent to reporter');
         } else {
