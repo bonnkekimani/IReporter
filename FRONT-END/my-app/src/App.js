@@ -10,8 +10,9 @@ import Signup from './components/signup';
 import LoginForm from './components/login';
 import AdminPage from './ADMIN_COMPONENT/AdminPage';
 import UserPage from './User Components/UserPage';
-
-
+import ReportForm from './User Components/ReportForm';
+import Reportlist from './User Components/Reportlist';
+import Map from './User Components/Status';
 function App() {
   return (
     <>
@@ -23,14 +24,14 @@ function App() {
           <Route path='/products' element={<Products />} />
           <Route path='/sign-up' element={<Signup />} />
           <Route path='/login' element={<LoginForm />} />
-
+          <Route path='/reportform' element={<ReportForm />} />
+          <Route path='/reportlist' element={<Reportlist />} />
           <Route path='/adminpage' element={<AdminPage />} />
-
+          <Route path='/status' element={<Map />} />
           <Route path='/userpage' exact element={<UserPage />} />
         </Routes>
       </Router>
     </>
   );
 }
-
 export default App;
