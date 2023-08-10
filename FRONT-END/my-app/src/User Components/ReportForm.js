@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import "./style.css";
+
 const Reportform = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     location: '',
     reporter_email: '',
-    category: '', // Added category field
+    category: 'Select Category', // Default category
+    status:'Select Status',
     file: null,
   });
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({
@@ -16,6 +19,7 @@ const Reportform = () => {
       [name]: value,
     });
   };
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setFormData({
@@ -23,6 +27,7 @@ const Reportform = () => {
       file,
     });
   };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const form = new FormData();
@@ -33,7 +38,7 @@ const Reportform = () => {
       }
     }
     try {
-      const response = await fetch('/upload', { // Updated endpoint URL
+      const response = await fetch('/upload', {
         method: 'POST',
         body: form,
       });
@@ -48,6 +53,7 @@ const Reportform = () => {
       console.error('Error:', error);
     }
   };
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
@@ -65,6 +71,7 @@ const Reportform = () => {
       <div>
         <label htmlFor="category">Category:</label>
         <select id="category" name="category" value={formData.category} onChange={handleInputChange} required>
+        <option value="select">Select Category</option>
           <option value="Red Flag">Red Flag</option>
           <option value="Intervention">Intervention</option>
         </select>
@@ -77,8 +84,17 @@ const Reportform = () => {
         <label htmlFor="file">File:</label>
         <input type="file" id="file" name="file" onChange={handleFileChange} accept="image/*" required />
       </div>
+      <div>
+  <label htmlFor="status">Status:</label>
+  <select id="status" name="status" value={formData.status} onChange={handleInputChange} required>
+    <option value="select">Select Status</option>
+    <option value="submitted">Submitted</option>
+  </select>
+</div>
+
       <button type="submit">Upload Report</button>
     </form>
   );
 };
+
 export default Reportform;

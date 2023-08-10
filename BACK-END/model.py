@@ -52,9 +52,9 @@ class Report(db.Model):
     title = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text, nullable=False)
     location = db.Column(db.Text, nullable=False)
-    category = db.Column(db.Text, nullable=False)
-    reporter_email = db.Column(db.String(50))
-    media = db.Column(db.Text, nullable=False)
+    category = db.Column(db.String(50), nullable=False)
+    reporter_email = db.Column(db.String(50), nullable=False)
+    status = db.Column(db.String(100), nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     
