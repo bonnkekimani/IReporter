@@ -6,7 +6,7 @@ const Reportform = () => {
     description: '',
     location: '',
     reporter_email: '',
-    category:'',
+    category: '', // Added category field
     file: null,
   });
   const handleInputChange = (event) => {
@@ -25,24 +25,27 @@ const Reportform = () => {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const form = new FormData(event.target);
+    const form = new FormData();
+    // Append form data
+    for (const key in formData) {
+      if (formData.hasOwnProperty(key)) {
+        form.append(key, formData[key]);
+      }
+    }
     try {
-      const response = await fetch('http://localhost:5000/reports', {
+      const response = await fetch('/upload', { // Updated endpoint URL
         method: 'POST',
         body: form,
       });
       if (response.ok) {
         const data = await response.json();
         console.log('Upload successful:', data);
-        
       } else {
         const errorData = await response.json();
         console.error('Error:', errorData);
-        
       }
     } catch (error) {
       console.error('Error:', error);
-       
     }
   };
   return (
@@ -60,13 +63,11 @@ const Reportform = () => {
         <input type="text" id="location" name="location" value={formData.location} onChange={handleInputChange} required />
       </div>
       <div>
-        <label htmlFor="location">Category:</label>
-        <select id="categories" name="categoriess">
-          <option value="volvo">Red Flag</option>
-          <option value="saab">Intervention</option>
-          
+        <label htmlFor="category">Category:</label>
+        <select id="category" name="category" value={formData.category} onChange={handleInputChange} required>
+          <option value="Red Flag">Red Flag</option>
+          <option value="Intervention">Intervention</option>
         </select>
-        {/* <input type="input" id="location" name="Category" value={formData.location} onChange={handleInputChange} required /> */}
       </div>
       <div>
         <label htmlFor="reporter_email">Reporter Email:</label>
@@ -81,4 +82,3 @@ const Reportform = () => {
   );
 };
 export default Reportform;
-
