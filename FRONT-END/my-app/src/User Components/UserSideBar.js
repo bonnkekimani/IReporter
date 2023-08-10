@@ -12,10 +12,10 @@ function SideBar () {
                 <Link to='/dashboard'>Dashboard</Link>
             </li>
             <li>
-                <Link to='/reports'>File Report</Link>
+                <Link to='/reports'>Status</Link>
             </li>
             <li>
-                <Link to='/reportform'>Status</Link>
+                <Link to='/reportform'>File Report</Link>
             </li>
             <li>
                 <Link to='/status'>All Reports</Link>

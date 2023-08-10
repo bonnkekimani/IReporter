@@ -69,8 +69,9 @@ class Report(db.Model):
     description = db.Column(db.Text, nullable=False)
     media = db.Column(db.Text, nullable=False)
     location = db.Column(db.Text, nullable=False)
-
-    reporter_email = db.Column(db.String(50))
+    category = db.Column(db.String(50), nullable=False)
+    reporter_email = db.Column(db.String(50), nullable=False)
+    status = db.Column(db.String(100), nullable=False)
 
     # Foreign key column to link the report to the user who reported it
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))

@@ -10,7 +10,8 @@ import Signup from './components/signup';
 import LoginForm from './components/login';
 import AdminPage from './ADMIN_COMPONENT/AdminPage';
 import UserPage from './User Components/UserPage';
-
+import ReportForm from './User Components/ReportForm';
+import Reports from './ADMIN_COMPONENT/AdminReports';
 
 function App() {
   return (
@@ -23,10 +24,10 @@ function App() {
           <Route path='/products' element={<Products />} />
           <Route path='/sign-up' element={<Signup />} />
           <Route path='/login' element={<LoginForm />} />
-
           <Route path='/adminpage' element={<AdminPage />} />
-
           <Route path='/userpage' exact element={<UserPage />} />
+          <Route path='/reportform' exact element={<ReportForm />} />
+          <Route path='/allreports' exact element={<Reports />} />
         </Routes>
       </Router>
     </>

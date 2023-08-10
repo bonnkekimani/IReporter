@@ -1,5 +1,9 @@
 {
   "dependencies": {
+    "mailjet": "^0.0.1",
+    "node-mailjet": "^6.0.4",
+    "nodemailer": "^6.9.4",
+    "react-bootstrap": "^2.8.0",
     "react-router": "^6.14.2"
   }
 }

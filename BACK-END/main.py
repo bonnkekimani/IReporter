@@ -18,6 +18,9 @@ from werkzeug import *
 from flask_sqlalchemy import SQLAlchemy
 import cloudinary
 from cloudinary.uploader import upload
+# from mailjet import Mailjet
+from mailjet_rest import Client
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -51,6 +54,8 @@ report_model = api.model(
         "media": fields.String(),
         "location": fields.String(),
         "reporter_email": fields.String(),
+        "category": fields.String(),
+        "status": fields.String(),
     },
 )
 
@@ -157,7 +162,7 @@ def login():
 @api.route("/add_role")
 class AddRole(Resource):
     @api.expect(add_role_model)
-    @jwt_required()
+    # @jwt_required()
     def post(self):
         data = request.get_json()
         
@@ -193,52 +198,70 @@ class HelloResource(Resource):
 
 
 # http methods on report.
-@api.route("/reports")
-class ReportsResource(Resource):
+@api.route("/reports", methods=['GET'])
+class ReportsList(Resource):
     @api.marshal_list_with(report_model)
     def get(self):
         """Get all reports"""
         reports = Report.query.all()
-
         return reports
-        pass
 
+    
 @api.route("/upload", methods=['POST'])
 class Upload(Resource):
-    # @api.marshal_with(report_model)
     @api.expect(report_model)
-    # @jwt_required()
     def post(self):
-        # def post(self):
-        api.logger.info("in upload route")
         if request.method == "POST":
             file_to_upload = request.files["file"]
-            # Updated key from 'file' to 'image'
-            api.logger.info("%s image_to_upload", file_to_upload)
             if file_to_upload:
-                # Upload the image to Cloudinary
                 upload_result = cloudinary.uploader.upload(file_to_upload)
-                api.logger.info(upload_result)
-                    # Get other form data
+
                 title = request.form.get('title')
                 description = request.form.get('description')
                 location = request.form.get('location')
-                # reporter_email = data.get('reporter_email')
-                    # Create a new Report object and save it to the database
-                report = Report(
-                    title=title,
-                    description=description,
-                    media=upload_result["url"],
-                    location=location,
-                    # reporter_email=email
-                )
-                db.session.add(report)
-                db.session.commit()
-                return make_response(jsonify({"message":"media and report uploaded successfully"}))
-                return jsonify(upload_result)
-            return jsonify({"error": "No file provided."}), 400
+                reporter_email = request.form.get('reporter_email')
+                category = request.form.get('category')
+                status = request.form.get('status')
+
+                user = User.query.filter_by(email=reporter_email).first()
+
+                if user:
+                    report = Report(
+                        title=title,
+                        description=description,
+                        media=upload_result["url"],
+                        location=location,
+                        reporter_email=reporter_email,
+                        category=category,
+                        status=status,
+                        user_id=user.id
+                    )
+
+                    db.session.add(report)
+                    db.session.commit()
+                    return make_response(jsonify({"message": "Media and report uploaded successfully"}), 201)
+                else:
+                    return jsonify({"error": "User not found."}), 404
+            else:
+                return jsonify({"error": "No file provided."}), 400
         return jsonify({"error": "Method not allowed."}), 405
 
+
+@app.route('/reports/<int:report_id>/status', methods=['PATCH'])
+def update_report_status(report_id):
+    new_status = request.json.get('status')
+
+    if not new_status:
+        return jsonify(message='Invalid status data'), 400
+
+    report = Report.query.get(report_id)
+    if not report:
+        return jsonify(message='Report not found'), 404
+
+    report.status = new_status
+    db.session.commit()
+
+    return jsonify(message='Report status updated successfully'), 200
 
 
 @api.route('/report/<int:id>')
@@ -306,7 +329,59 @@ class MediaReport(Resource):
         # Commit the changes to the database
         db.session.commit()
         return jsonify({'message': 'Report updated successfully.'})
+
+
+
+
+# Configure your Mailjet settings
+MJ_API_KEY = '94fad3d0a11ace519457878ebeb74437'
+MJ_API_SECRET = '32f1155cd1b82d2e9962236aec0e02b2'
+
+def send_email(to_email, subject, html_content):
+    try:
+        # Configure your Mailjet settings
+        MJ_API_KEY = '94fad3d0a11ace519457878ebeb74437'
+        MJ_API_SECRET = '32f1155cd1b82d2e9962236aec0e02b2'
+
+        mj = Client(auth=(MJ_API_KEY, MJ_API_SECRET), version='v3.1')
         
+        data = {
+            'Messages': [{
+                'From': {
+                    'Email': 'kelly.koome@student.moringaschool.com',
+                    'Name': 'Admin'
+                },
+                'To': [{
+                    'Email': to_email,
+                    'Name': 'Recipient Name'
+                }],
+                'Subject': subject,
+                'HTMLPart': html_content
+            }]
+        }
+
+        response = mj.send.create(data=data)
+        print(response.status_code)
+        print(response.json())
+    except Exception as e:
+        print('Error sending email:', str(e))
+
+
+@app.route('/send-email', methods=['POST'])
+def send_email_route():
+    try:
+        data = request.json
+        to_email = data.get('toEmail')
+        subject = data.get('subject')
+        html_content = data.get('htmlContent')
+
+        send_email(to_email, subject, html_content)
+
+        return jsonify({'message': 'Email sent successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 @app.shell_context_processor
 def make_shell_context():
     return {
