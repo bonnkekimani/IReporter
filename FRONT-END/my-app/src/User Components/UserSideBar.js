@@ -18,8 +18,9 @@ function SideBar () {
                 <Link to='/reportform'>Status</Link>
             </li>
             <li>
-                <Link to='/status'>All Reports</Link>
+                <Link to='/reportslist'>All Reports</Link>
             </li>
+
             <li>
             <Link to='/denied'><PersonPinIcon className="img-2"/></Link> 
             </li>

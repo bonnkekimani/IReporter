@@ -12,6 +12,7 @@ function Dashboard(){
     {/* <Categories/> */}
     <SlideCard/>
     <Flash/>
+    
     </>
    
   );

@@ -10,6 +10,7 @@ import Signup from './components/signup';
 import LoginForm from './components/login';
 import AdminPage from './ADMIN_COMPONENT/AdminPage';
 import UserPage from './User Components/UserPage';
+import ReportsList from './User Components/ReportsList';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path='/adminpage' element={<AdminPage />} />
 
           <Route path='/userpage' exact element={<UserPage />} />
+          <Route path='/reportslist' exact element={<ReportsList />} />
         </Routes>
       </Router>
     </>

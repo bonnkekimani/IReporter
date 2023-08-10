@@ -1,5 +1,5 @@
 import React from 'react'
-import UserNewCard from './UserNewCard'
+import ReportsList from './ReportsList'
 
 const Flash = ({ productItems }) => {
   return (
@@ -7,10 +7,11 @@ const Flash = ({ productItems }) => {
     <section className='flash background'>
         <div className='container'>
             <div className='heading f_flex'>
-            <i className='fa fa-bolt'></i>
+            
             <h1>DASHBOARD</h1> 
+            
         </div>
-        <UserNewCard productItems={ productItems }/>
+        <ReportsList productItems={ productItems }/>
         </div>
     </section>
     </>
