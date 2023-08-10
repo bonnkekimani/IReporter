@@ -12,13 +12,13 @@ function SideBar () {
                 <Link to='/dashboard'>Dashboard</Link>
             </li>
             <li>
-                <Link to='/reports'>Status</Link>
+                <Link to='/map'>Map</Link>
             </li>
             <li>
                 <Link to='/reportform'>File Report</Link>
             </li>
             <li>
-                <Link to='/status'>All Reports</Link>
+                <Link to='/reportlist'>All Reports</Link>
             </li>
             <li>
             <Link to='/denied'><PersonPinIcon className="img-2"/></Link> 

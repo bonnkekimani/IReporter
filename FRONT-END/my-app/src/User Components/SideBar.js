@@ -18,7 +18,7 @@ function SideBar () {
                 <Link to='/reportform'>File Report</Link>
             </li>
             <li>
-                <Link to='/status'>Status</Link>
+                <Link to='/map'>Map</Link>
             </li>
             <li>
             <Link to='/denied'><PersonPinIcon className="img-2"/></Link>
