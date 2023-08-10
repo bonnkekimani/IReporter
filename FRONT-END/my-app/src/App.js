@@ -13,6 +13,8 @@ import UserPage from './User Components/UserPage';
 import ReportForm from './User Components/ReportForm';
 import Reports from './ADMIN_COMPONENT/AdminReports';
 
+import Reportlist from './User Components/Reportlist';
+import Map from './User Components/Status';
 function App() {
   return (
     <>
@@ -25,6 +27,10 @@ function App() {
           <Route path='/sign-up' element={<Signup />} />
           <Route path='/login' element={<LoginForm />} />
           <Route path='/adminpage' element={<AdminPage />} />
+          <Route path='/reportform' element={<ReportForm />} />
+          <Route path='/reportlist' element={<Reportlist />} />
+          <Route path='/adminpage' element={<AdminPage />} />
+          <Route path='/status' element={<Map />} />
           <Route path='/userpage' exact element={<UserPage />} />
           <Route path='/reportform' exact element={<ReportForm />} />
           <Route path='/allreports' exact element={<Reports />} />
@@ -33,5 +39,4 @@ function App() {
     </>
   );
 }
-
 export default App;

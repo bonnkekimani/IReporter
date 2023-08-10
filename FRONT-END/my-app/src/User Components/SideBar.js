@@ -1,4 +1,3 @@
-
 import React from 'react'
 import PersonPinIcon from '@mui/icons-material/PersonPin';
 import "./style.css";
@@ -13,21 +12,19 @@ function SideBar () {
                 <Link to='/dashboard'>Dashboard</Link>
             </li>
             <li>
-                <Link to='/reports'>File Report</Link>
+                <Link to='/reportlist'>All Report</Link>
             </li>
             <li>
-                <Link to='/reportform'>Status</Link>
+                <Link to='/reportform'>File Report</Link>
             </li>
             <li>
-                <Link to='/status'>All Reports</Link>
+                <Link to='/status'>Status</Link>
             </li>
             <li>
-            <Link to='/denied'><PersonPinIcon className="img-2"/></Link> 
+            <Link to='/denied'><PersonPinIcon className="img-2"/></Link>
             </li>
         </ul>
-       
     </nav>
   )
 }
-
-export default SideBar 
+export default SideBar

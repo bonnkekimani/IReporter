@@ -12,10 +12,12 @@ const LoginForm = () => {
   const [roles, setRoles] = useState([]);
   const [message, setMessage] = useState("");
 
+  const [token, setToken] = useState(""); 
+  
   const handleLogin = async (e) => {
     e.preventDefault();
   
-    const response = await fetch("/login", {
+    const response = await fetch('/login', {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

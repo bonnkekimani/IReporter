@@ -7,8 +7,12 @@ const Reportform = () => {
     description: '',
     location: '',
     reporter_email: '',
+<<<<<<< HEAD
     category: 'Select Category', // Default category
     status:'Select Status',
+=======
+    category: '', // Added category field
+>>>>>>> b3a38e81c34571688dd77850cb6c068a79d27a38
     file: null,
   });
 
@@ -30,9 +34,19 @@ const Reportform = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const form = new FormData(event.target);
+    const form = new FormData();
+    // Append form data
+    for (const key in formData) {
+      if (formData.hasOwnProperty(key)) {
+        form.append(key, formData[key]);
+      }
+    }
     try {
+<<<<<<< HEAD
       const response = await fetch('/upload', {
+=======
+      const response = await fetch('/upload', { // Updated endpoint URL
+>>>>>>> b3a38e81c34571688dd77850cb6c068a79d27a38
         method: 'POST',
         body: form,
       });
@@ -65,7 +79,10 @@ const Reportform = () => {
       <div>
         <label htmlFor="category">Category:</label>
         <select id="category" name="category" value={formData.category} onChange={handleInputChange} required>
+<<<<<<< HEAD
         <option value="select">Select Category</option>
+=======
+>>>>>>> b3a38e81c34571688dd77850cb6c068a79d27a38
           <option value="Red Flag">Red Flag</option>
           <option value="Intervention">Intervention</option>
         </select>
@@ -90,5 +107,9 @@ const Reportform = () => {
     </form>
   );
 };
+<<<<<<< HEAD
 
 export default Reportform;
+=======
+export default Reportform;
+>>>>>>> b3a38e81c34571688dd77850cb6c068a79d27a38
