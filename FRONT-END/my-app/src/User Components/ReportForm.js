@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import "./style.css";
+import UserSideBar from './UserSideBar';
 const Reportform = () => {
   const [formData, setFormData] = useState({
     title: '',
@@ -34,7 +35,7 @@ const Reportform = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log('Upload successful:', data);
+        alert('Uploaded successfully:', data);
       } else {
         const errorData = await response.json();
         console.error('Error:', errorData);
@@ -44,7 +45,9 @@ const Reportform = () => {
     }
   };
   return (
-    <form onSubmit={handleSubmit}>
+    <>
+    <UserSideBar/>
+    <form onSubmit={handleSubmit} style={{ width: '90%',marginLeft: '200px', height: '400px' }}>
       <div>
         <label htmlFor="title">Title:</label>
         <input type="text" id="title" name="title" value={formData.title} onChange={handleInputChange} required />
@@ -80,8 +83,9 @@ const Reportform = () => {
     <option value="submitted">Submitted</option>
   </select>
 </div>
-      <button type="submit">Upload Report</button>
+      <button type="submit" style={{ width: '150px', height:'60px', marginBottom:'20px'}}>Upload Report</button>
     </form>
+    </>
   );
 };
 export default Reportform;

@@ -1,18 +1,18 @@
 import React from "react";
 import "./style.css";
-// import Categories from "./Category";
 import SlideCard from "./SlideCard";
 import Flash from "./Flash";
 
 
 
+
 function Dashboard(){
   return (
-    <>
-    {/* <Categories/> */}
+    <div style={{ width: '90%',marginLeft: '200px', height: '400px' }}> 
+  
     <SlideCard/>
     <Flash/>
-    </>
+    </div>
    
   );
 }

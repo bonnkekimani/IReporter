@@ -1,6 +1,6 @@
 import React from 'react'
 import './AdminStyles.css'
-import Sidebar from './AdminSidebar'
+import AdminSidebar from './AdminSidebar'
 import CardsContainer from './AdminCardsContainer'
 import Card from './AdminCard'
 import Map from '../User Components/Status'
@@ -13,9 +13,9 @@ function AdminPage() {
         
         
         <>
-        <Sidebar />
-        {/* <CardsContainer /> */}
-        {/* <Card /> */}
+        <AdminSidebar/>
+        {/* <CardsContainer />
+        <Card /> */}
         <div >
         <Map />
         </div>

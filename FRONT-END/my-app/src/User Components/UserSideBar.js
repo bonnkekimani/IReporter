@@ -1,32 +1,39 @@
-import React from 'react'
-import PersonPinIcon from '@mui/icons-material/PersonPin';
+import React, { useState } from "react";
 import "./style.css";
 import {Link} from "react-router-dom"
-function SideBar () {
+function UserSideBar () {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const handleLogout = () => {
+        // Perform any logout actions here, e.g., clearing user data from localStorage
+        setIsLoggedIn(false);
+        alert("You have logged out.");
+    };
   return (
-    <nav className='nav'>
-        <Link to="" className='site-title'>
-            IREPORTER</Link>
+    <div className="sidebar-user">
         <ul>
-        <li>
+        <li className="menu-item">
                 <Link to='/dashboard'>Dashboard</Link>
             </li>
-            <li>
+            <li className="menu-item">
                 <Link to='/map'>Map</Link>
             </li>
-            <li>
+            <li className="menu-item">
                 <Link to='/reportform'>File Report</Link>
             </li>
-            <li>
+            <li className="menu-item">
                 <Link to='/reportlist'>All Reports</Link>
             </li>
-            <li>
-            <Link to='/denied'><PersonPinIcon className="img-2"/></Link> 
+           
+            <li className="menu-item">
+                <Link to='/'>Log Out</Link>
             </li>
+            
         </ul>
        
-    </nav>
+    
+        </div>
   )
 }
 
-export default SideBar 
+export default UserSideBar

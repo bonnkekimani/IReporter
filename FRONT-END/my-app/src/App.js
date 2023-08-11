@@ -15,12 +15,16 @@ import Reports from './ADMIN_COMPONENT/AdminReports';
 
 import Reportlist from './User Components/Reportlist';
 import Map from './User Components/Status';
+import Dashboard from './User Components/Dashboard';
+
 function App() {
   return (
     <>
       <Router>
         <Navbar />
+        
         <Routes>
+
           <Route path='/' exact element={<Home />} />
           <Route path='/services' element={<Services />} />
           <Route path='/products' element={<Products />} />
@@ -29,11 +33,12 @@ function App() {
           <Route path='/adminpage' element={<AdminPage />} />
           <Route path='/reportform' element={<ReportForm />} />
           <Route path='/reportlist' element={<Reportlist />} />
-          <Route path='/adminpage' element={<AdminPage />} />
+  
           <Route path='/map' element={<Map />} />
           <Route path='/userpage' exact element={<UserPage />} />
           <Route path='/reportform' exact element={<ReportForm />} />
           <Route path='/allreports' exact element={<Reports />} />
+          <Route path='/dashboard' exact element={<Dashboard />} />
         </Routes>
       </Router>
     </>

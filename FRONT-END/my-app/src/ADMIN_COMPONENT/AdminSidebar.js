@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 // import "./Sidebar.css"; // Import the CSS file for sidebar styles
-
-const   Sidebar = () => {
+import "./AdminStyles.css";
+const   AdminSidebar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const handleLogout = () => {
@@ -26,18 +26,21 @@ const   Sidebar = () => {
             </NavLink>
             </li>
             <li className="menu-item">
-            <NavLink to="/CardsContainer" activeClassName="active">
-                Cards Container
+            <NavLink to="/" activeClassName="active">
+               Log Out
             </NavLink>
             </li>
+            {/* <li className="menu-item">
             {isLoggedIn ? (
             <li className="menu-item">
                 <button onClick={handleLogout}>Logout</button>
             </li>
             ) : null}
+            </li> */}
+            
         </ul>
         </div>
     );
 };
 
-export default Sidebar;
+export default AdminSidebar;

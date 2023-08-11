@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./signup.css";
 
 const Signup = () => {
   const [firstName, setFirstName] = useState("");
@@ -83,7 +84,7 @@ const Signup = () => {
       // Handle the response from the server
       if (response.ok) {
         const responseData = await response.json();
-        console.log("User data saved:", responseData);
+        alert("User data saved:", responseData);
 
         // Clear the form after successful submission
         setFirstName("");
@@ -108,7 +109,10 @@ const Signup = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div className="form1">
+    <h1 style={{color:'white', paddingTop:'30px'}}>Sign Up</h1>
+    <form onSubmit={handleSubmit} className="signup"  >
+      
       <input
         type="text"
         placeholder="First Name"
@@ -138,6 +142,7 @@ const Signup = () => {
         onChange={handleChange}
       />
       <select name="gender" value={gender} onChange={handleChange}>
+        <option value="default">Select Gender</option>
         <option value="male">Male</option>
         <option value="female">Female</option>
       </select>
@@ -157,6 +162,7 @@ const Signup = () => {
       />
       <button type="submit">Sign Up</button>
     </form>
+    </div>
   );
 };
 

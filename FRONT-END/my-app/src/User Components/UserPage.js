@@ -1,24 +1,26 @@
 import React from 'react'
 import "./style.css";
 import Dashboard from './Dashboard'
+import UserSideBar from './UserSideBar';
 
-import SideBar from './SideBar';
+
 
 
 
 const UserPage = () => {
   return (
     
-    <>
-    <SideBar/>
+    <div className='userpage'>
+    <UserSideBar/> 
     <div className='container'>
-      <Dashboard/>
-       
+     
+    <Dashboard/>
+     
       
     </div>
     
     
-    </>
+    </div>
     
   )
 }

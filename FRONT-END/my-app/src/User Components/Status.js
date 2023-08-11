@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+// import UserSideBar from './UserSideBar';
 const Map = () => {
   const defaultPosition = [-1.2832533, 36.8172449];
   const zoom = 14;
@@ -81,8 +82,9 @@ const Map = () => {
     }
   };
   return (
-    <div>
-      <MapContainer center={defaultPosition} zoom={zoom} style={{ width: '100%', height: '400px' }}>
+    <div style={{ width: '90%',marginLeft: '200px', height: '400px' }}>
+       {/* <UserSideBar/> */}
+      <MapContainer center={defaultPosition} zoom={zoom} style={{ width: '95%', height: '400px' }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="© OpenStreetMap contributors"
@@ -136,7 +138,7 @@ const Map = () => {
           Longitude:
           <input type="number" value={longitude} onChange={handleLongitudeChange} step="0.0001" />
         </label>
-        <button type="submit">Update Marker Position</button>
+        <button  type="submit" style={{ width: '150px', height:'60px', marginBottom:'20px'}}>Update Marker Position</button>
       </form>
       <button onClick={handleAddMarker}>Add Marker</button>
       {markers.map((marker) => (

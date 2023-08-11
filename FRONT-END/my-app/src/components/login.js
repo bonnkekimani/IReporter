@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import "./signup.css";
 
 
 const LoginForm = () => {
@@ -61,10 +61,10 @@ const LoginForm = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Login</h1>
+    <div className="form1">
+      <h1 style={{color:'white', paddingTop:'30px'}}>Login</h1>
       {message && <p>{message}</p>}
-      <form onSubmit={handleLogin}>
+      <form className="signup" onSubmit={handleLogin} style={{color:'white'}} >
         <div>
           <label>User Email:</label>
           <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -74,15 +74,24 @@ const LoginForm = () => {
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
         <div>
-          <label>Role:</label>
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            {roles.map((roleOption) => (
-              <option key={roleOption.name} value={roleOption.name}>
-                {roleOption.name}
-              </option>
-            ))}
-          </select>
-        </div>
+  <label>Role:</label>
+  <select value={role} onChange={(e) => setRole(e.target.value)}>
+    <option value="" disabled>
+      Select Role
+    </option>
+    {roles.map((roleOption) => (
+      <option key={roleOption.name} value={roleOption.name}>
+        {roleOption.name}
+      </option>
+    ))}
+  </select>
+</div>
+
+
+
+
+
+
         <button type="submit">Login</button>
       </form>
     </div>

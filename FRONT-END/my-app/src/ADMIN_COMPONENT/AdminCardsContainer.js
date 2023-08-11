@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Card from './AdminCard';
+import AdminSidebar from './AdminSidebar';
 
 function CardsContainer() {
     const [cards, setCards] = useState([
@@ -89,6 +90,7 @@ function CardsContainer() {
 
     return (
         <div className="cards-container">
+        <AdminSidebar/>
         {cards.map((card, index) => (
             <Card
             key={index}

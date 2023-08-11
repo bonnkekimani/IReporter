@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import UserSideBar from './UserSideBar';
 const ReportsList = () => {
   const [reports, setReports] = useState([]);
   useEffect(() => {
@@ -70,7 +71,8 @@ const ReportsList = () => {
     }
   };
   return (
-    <div className="card-grid">
+    <div className="card-grid" style={{ width: '90%',marginLeft: '200px', height: '400px' }}>
+      <UserSideBar/>
       {reports.map(report => (
         <div key={report.id} className="card">
           <button className="delete-btn" onClick={() => handleDeleteReport(report.id)}>x</button>

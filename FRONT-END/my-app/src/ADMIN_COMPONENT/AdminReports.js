@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import AdminSidebar from './AdminSidebar';
 
 const Reports = () => {
   const [reports, setReports] = useState([]);
@@ -94,6 +95,7 @@ const Reports = () => {
 
   return (
     <div>
+      <AdminSidebar/>
       <h2>Reports</h2>
 
       <Form.Group controlId="categorySelect">
@@ -105,12 +107,12 @@ const Reports = () => {
         </Form.Control>
       </Form.Group>
 
-      <div className="report-cards">
+      <div className="card-grid">
         {filteredReports.map((report) => (
-          <Card key={report.id} className="mb-3">
+          <Card key={report.id} className="mb-3" style={{marginLeft:'80%'}}>
             <Card.Body>
               <Card.Title>{report.title}</Card.Title>
-              <img src={report.media} alt={`Report ${report.id}`} style={{ maxWidth: '100%' }} />
+              <img src={report.media} alt={`Report ${report.id}`} style={{ maxWidth: '60%' }} />
               <Card.Text>{report.description}</Card.Text>
               <Card.Text>Location: {report.location}</Card.Text>
               <Card.Text>Category: {report.category}</Card.Text>
@@ -118,7 +120,7 @@ const Reports = () => {
               <Card.Text>Status: {report.status}</Card.Text>
 
               <div className="status-buttons">
-                <Button
+                <Button style={{marginBottom:'2rem'}}
                   variant="primary"
                   onClick={() =>
                     handleStatusChange(
