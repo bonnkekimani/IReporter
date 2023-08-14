@@ -28,7 +28,7 @@ function HeroSection() {
           buttonStyle='btn--outline'
           buttonSize='btn--large'
         >
-          login
+          LOGIN
         </Button>
         </Link>
 

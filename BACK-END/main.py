@@ -275,7 +275,16 @@ class ReportResource(Resource):
         return report
         pass
 
-
+@app.route("/reports/<int:report_id>", methods=['DELETE'])
+def delete_report(report_id):
+        # Get the report by ID
+        report = Report.query.get(report_id)
+        if not report:
+            return jsonify({'error': 'Report not found.'}), 404
+        # Delete the report from the database
+        db.session.delete(report)
+        db.session.commit()
+        return jsonify({'message': 'Report deleted successfully.'})    
     # @api.marshal_with(report_model)
     # @jwt_required()
     # def delete(self, id):
